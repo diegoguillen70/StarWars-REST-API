@@ -31,8 +31,6 @@ class User(db.Model):
     lasttname = db.Column(db.String(50), nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
-    favorites = db.relationship("Favorites", backref="user", uselist=False)
-
     def __repr__(self):
         return "<User %r>" % self.username
 
@@ -48,13 +46,15 @@ class People(db.Model):
     __tablename__ = "people"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
-    birth_year = db.Column(db.String(15), nullable=False)
+    height = db.Column(db.Integer, nullable=False)
+    skin_color = db.Column(db.String(25), nullable=False)
+    hair_color = db.Column(db.String(20), nullable=False)
     eye_color = db.Column(db.String(15), nullable=False)
+    birth_year = db.Column(db.String(15), nullable=False)
     gender = db.Column(db.String(25), nullable=False)
-    hair_color = db.Column(db.String(15), nullable=False)
+    home_world = db.Column(db.String(20), nullable=False)
     description = db.Column(db.String(500), nullable=False)
     starships = db.Column(db.String(15), nullable=False)
-    home_world = db.Column(db.String(20), nullable=False)
 
 
 class Favorites(db.Model):
@@ -65,6 +65,7 @@ class Favorites(db.Model):
     favorite_starships = db.Column(db.String(200))
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user = db.relationship("User")  # , backref="favorites", uselist=False)
 
     people = db.relationship("People", secondary=join_table_people)
     planets = db.relationship("Planets", secondary=join_table_planets)
@@ -77,15 +78,23 @@ class Planets(db.Model):
     # Notice that each column is also a normal Python instance attribute.
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
-    terrain = db.Column(db.String(30), nullable=False)
-    gravity = db.Column(db.String(3), nullable=False)
+    rotation_period = db.Column(db.Integer, nullable=False)
     orbital_period = db.Column(db.Integer, nullable=False)
+    diameter = db.Column(db.Integer, nullable=False)
+    climate = db.Column(db.String(30), nullable=False)
+    gravity = db.Column(db.String(10), nullable=False)
+    terrain = db.Column(db.String(30), nullable=False)
     population = db.Column(db.String(250))
-    climate = db.Column(db.String(30))
 
 
 class Starships(db.Model):
     __tablename__ = "starships"
     id = db.Column(db.Integer, primary_key=True)
-    population = db.Column(db.String(250))
-    atmosphere = db.Column(db.String(250))
+    name = db.Column(db.String(30), nullable=False)
+    model = db.Column(db.String(30), nullable=False)
+    manufacturer = db.Column(db.String(30), nullable=False)
+    length = db.Column(db.Integer, nullable=False)
+    max_atmosphering_speed = db.Column(db.String(30), nullable=False)
+    crew = db.Column(db.Integer, nullable=False)
+    passengers = db.Column(db.Integer, nullable=False)
+    starship_class = db.Column(db.String(100), nullable=False)
