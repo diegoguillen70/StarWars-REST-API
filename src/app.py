@@ -1,14 +1,14 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-import os
+import os, json
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, People, Planets, Starships
 
 # from models import Person
 
@@ -45,14 +45,24 @@ def sitemap():
 # GET Methods
 @app.route("/users", methods=["GET"])
 def users_get():
-    response_body = {"msg": "Hello, this is your GET /user response "}
-
+    user_list = User.query.all()
+    # response_body = user_list;
+    response_body = [{"username": str(user)} for user in user_list]
     return jsonify(response_body), 200
 
 
 @app.route("/users/favorites", methods=["GET"])
 def favorites_get():
-    response_body = {"msg": "Hello, this is your GET /user/favorites response "}
+    response_body = {"msg": "Hello, this is your GET /user/favorites/ response "}
+
+    return jsonify(response_body), 200
+
+
+@app.route("/users/favorites/<username>", methods=["GET"])
+def favorites_get_username(username):
+    response_body = {
+        "msg": f"Hello, this is your GET /user/favorites/{username} response "
+    }
 
     return jsonify(response_body), 200
 
@@ -100,7 +110,20 @@ def starship_get(starship_id):
 @app.route("/users/favorites/planets/<int:planet_id>", methods=["POST"])
 def add_planets():
     response_body = request.json
-
+    # data = request.json
+    # planet = Planets(
+    #     name=data["name"],
+    #     rotation_period=data["rotation_period"],
+    #     orbital_period=data["orbital_period"],
+    #     diameter=data["diameter"],
+    #     climate=data["climate"],
+    #     gravity=data["gravity"],
+    #     terrain=data["terrain"],
+    #     population=data["population"],
+    # )
+    # db.session.add(planet)
+    # db.session.commit()
+    # return {"message": f"planet {planet.name} has been created successfully."}
     return jsonify(response_body), 200
 
 

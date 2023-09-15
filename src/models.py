@@ -31,6 +31,11 @@ class User(db.Model):
     lasttname = db.Column(db.String(50), nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
+    favorites = db.relationship("Favorites", back_populates="user", uselist=False)
+
+    def __init__(self, username):
+        self.username = username
+
     def __repr__(self):
         return "<User %r>" % self.username
 
@@ -56,20 +61,37 @@ class People(db.Model):
     description = db.Column(db.String(500), nullable=False)
     starships = db.Column(db.String(15), nullable=False)
 
+    def __repr__(self):
+        return "<%r>" % self.name
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            # do not serialize the password, its a security breach
+        }
+
 
 class Favorites(db.Model):
     __tablename__ = "favorites"
     id = db.Column(db.Integer, primary_key=True)
-    favorite_characters = db.Column(db.String(200))
-    favorite_planets = db.Column(db.String(200))
-    favorite_starships = db.Column(db.String(200))
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    user = db.relationship("User")  # , backref="favorites", uselist=False)
+    user = db.relationship("User", back_populates="favorites")
 
     people = db.relationship("People", secondary=join_table_people)
     planets = db.relationship("Planets", secondary=join_table_planets)
     starships = db.relationship("Starships", secondary=join_table_starships)
+
+    def __repr__(self):
+        return "<%r>" % self.user
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.user,
+            # do not serialize the password, its a security breach
+        }
 
 
 class Planets(db.Model):
@@ -86,15 +108,35 @@ class Planets(db.Model):
     terrain = db.Column(db.String(30), nullable=False)
     population = db.Column(db.String(250))
 
+    def __repr__(self):
+        return "<Planets %r>" % self.name
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            # do not serialize the password, its a security breach
+        }
+
 
 class Starships(db.Model):
     __tablename__ = "starships"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
-    model = db.Column(db.String(30), nullable=False)
-    manufacturer = db.Column(db.String(30), nullable=False)
+    model = db.Column(db.String(60), nullable=False)
+    manufacturer = db.Column(db.String(90), nullable=False)
     length = db.Column(db.Integer, nullable=False)
     max_atmosphering_speed = db.Column(db.String(30), nullable=False)
     crew = db.Column(db.Integer, nullable=False)
     passengers = db.Column(db.Integer, nullable=False)
     starship_class = db.Column(db.String(100), nullable=False)
+
+    def __repr__(self):
+        return {[self.name]}
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            # do not serialize the password, its a security breach
+        }
