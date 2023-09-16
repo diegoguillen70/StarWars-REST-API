@@ -109,7 +109,7 @@ def starship_get(starship_id):
 # POST Methods
 @app.route("/users/favorites/planets/<int:planet_id>", methods=["POST"])
 def add_planets():
-    response_body = request.json
+    response_body = request.get_json()
     # data = request.json
     # planet = Planets(
     #     name=data["name"],
@@ -129,12 +129,12 @@ def add_planets():
 
 @app.route("/users/people/<int:people_id>", methods=["POST"])
 def add_people():
-    response_body = request.json
+    response_body = request.get_json()
 
 
 @app.route("/users/startships/<int:startship_id>", methods=["POST"])
 def add_startships():
-    response_body = request.json
+    response_body = request.get_json()
 
     return jsonify(response_body), 200
 

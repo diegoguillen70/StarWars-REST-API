@@ -33,8 +33,9 @@ class User(db.Model):
 
     favorites = db.relationship("Favorites", back_populates="user", uselist=False)
 
-    def __init__(self, username):
+    def __init__(self, username, email):
         self.username = username
+        self.email = email
 
     def __repr__(self):
         return "<User %r>" % self.username
